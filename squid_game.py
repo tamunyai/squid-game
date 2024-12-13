@@ -37,13 +37,19 @@ class Player:
 
 
 class SquidGame:
-    def __init__(self, total_players: int = 456) -> None:
-        """
-        Initializes the Squid Game with a given number of players.
+    """
+    Simulates the 'Red Light, Green Light' game from Squid Game.
 
-        Args:
-            total_players (int, optional): The total number of players in the game. Defaults to 456.
-        """
+    Attributes:
+        total_players (int): Total number of players in the game.
+        players (list[Player]): List of players participating in the game.
+    """
+
+    def __init__(self, total_players: int = 456) -> None:
+        if total_players <= 0:
+            raise ValueError("The number of players must be greater than 0.")
+
+        self.total_players = total_players
         self.players = self._create_players(total_players)
 
     def _create_players(self, total_players: int) -> list[Player]:
