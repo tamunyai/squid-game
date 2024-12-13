@@ -62,45 +62,37 @@ class SquidGame:
         Returns:
             list[Player]: A list of Player objects representing the players in the game.
         """
-        return [Player(player_id) for player_id in range(1, total_players + 1)]
+        return [Player(f"{id:03}") for id in range(1, total_players + 1)]
 
-    def start_game(
-        self,
-        light_interval: int = 5,
-        game_duration: int = 30,
-        current_light: str = "Green",
-    ) -> list[Player]:
+    def start(self, light_interval: int = 5, game_duration: int = 30) -> list[Player]:
         """
-        Simulates the Squid Game's "Red Light, Green Light" game.
-
-        The game alternates between "Green Light" (where players move) and "Red Light" (where players who move are eliminated).
-        The game runs for a specified duration or until all players are eliminated.
+        Runs the game for a specified duration or until all players are eliminated.
 
         Args:
-            light_interval (int, optional): The interval (in seconds) between each light switch. Defaults to 5.
-            game_duration (int, optional): The total duration (in seconds) of the game. Defaults to 30.
-            current_light (str, optional): The starting light ("Green" or "Red"). Defaults to "Green".
+            light_interval (int): Time (in seconds) between light changes. Defaults to 5.
+            game_duration (int): Total game duration (in seconds). Defaults to 30.
 
         Returns:
             list[Player]: A list of remaining players after the game ends.
         """
         rounds = 0
-        start_time = time()
-        while time() - start_time < game_duration:
-            rounds += 1
-            move_percentage = 80 if current_light == "Green" else 5
-            total_players = len(self.players)
-            players_to_move_count = int(total_players * (move_percentage / 100))
-            moving_players = sample(self.players, players_to_move_count)
-            stationary_players = [p for p in self.players if p not in moving_players]
+        start_time: float = time()
+        current_light = "Green"
 
-            # Update positions for moving players
+        while (elapsed_time := time() - start_time) < game_duration:
+            rounds += 1
+
+            # Determine moving players based on the current light
+            move_percentage = 80 if current_light == "Green" else 5
+            moving_players = self.get_moving_players(move_percentage)
+            stationary_players = self.get_stationary_players(moving_players)
+
+            # Move players and eliminate those moving on Red Light
             for player in moving_players:
                 player.move()
 
-            # Eliminate players who moved during Red light
-            if current_light == "Red":
-                self.players = stationary_players
+                if current_light == "Red":
+                    player.eliminate()
 
             # Output for current round
             print(f"Round {rounds}: {current_light} Light")
@@ -109,14 +101,26 @@ class SquidGame:
             self._print_eliminated(moving_players, current_light)
             print()
 
-            # Wait for the next interval before switching light
-            sleep(light_interval)
+            # End game if all players are eliminated
+            if len(self.get_remaining_players()) == 0:
+                print("All players eliminated!")
+                break
 
-            # Alternate between "Green" and "Red" light.
+            # Wait for the next interval before switching light
+            sleep(min(light_interval, game_duration - elapsed_time))
             current_light = "Red" if current_light == "Green" else "Green"
 
-        # Return the list of remaining players (those who are not eliminated)
-        return self.players
+        return self.get_remaining_players()
+
+    def reset(self):
+        """
+        Resets the game by recreating all players.
+
+        This method reinitializes the list of players to their original state, 
+        with all players starting at position 0 and marked as not eliminated. 
+        It can be used to restart the game without creating a new instance of the class.
+        """
+        self.players = self._create_players(self.total_players)
 
     def _print_players(self, label: str, players: list[Player]) -> None:
         """
