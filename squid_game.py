@@ -139,6 +139,51 @@ class SquidGame:
         else:
             print("Eliminated: None.")
 
+    def get_remaining_players(self) -> list[Player]:
+        """
+        Retrieves the list of players who are still active in the game.
+
+        Returns:
+            list[Player]: A list of players who have not been eliminated.
+        """
+        return [p for p in self.players if not p.eliminated]
+
+    def get_moving_players(self, move_percentage: int) -> list[Player]:
+        """
+        Selects a subset of remaining players who will attempt to move.
+
+        Args:
+            move_percentage (int): The percentage of remaining players that will attempt to move.
+
+        Returns:
+            list[Player]: A random sample of players who will move, based on the specified percentage.
+        """
+        remaining_players: list[Player] = self.get_remaining_players()
+        total_remaining: int = len(remaining_players)
+        num_to_move = int(total_remaining * (move_percentage / 100))
+        return sample(remaining_players, min(num_to_move, total_remaining))
+
+    def get_stationary_players(self, moving_players: list[Player]) -> list[Player]:
+        """
+        Identifies players who chose to stay still in the current round.
+
+        Args:
+            moving_players (list[Player]): The list of players who attempted to move.
+
+        Returns:
+            list[Player]: A list of players who did not attempt to move during the current round.
+        """
+        return [p for p in self.get_remaining_players() if p not in moving_players]
+
+    def get_eliminated_players(self) -> list[Player]:
+        """
+        Retrieves the list of players who have been eliminated.
+
+        Returns:
+            list[Player]: A list of players who are no longer in the game.
+        """
+        return [p for p in self.players if p.eliminated]
+
 
 if __name__ == "__main__":
     game = SquidGame()
