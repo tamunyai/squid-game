@@ -54,7 +54,7 @@ class SquidGame:
 
     def _create_players(self, total_players: int) -> list[Player]:
         """
-        Creates a list of Player objects.
+        Creates a list of Player objects with unique IDs.
 
         Args:
             total_players (int): The total number of players to be created.
@@ -130,7 +130,7 @@ class SquidGame:
             label (str): The label indicating whether the players "Moved" or were "Static".
             players (list[Player]): The list of players who either moved or stayed still.
         """
-        print(f'{label}: {", ".join([str(player.player_id) for player in players])}')
+        print(f'{label}: {", ".join([p.id for p in players])}')
 
     def _print_eliminated(
         self, moving_players: list[Player], current_light: str
@@ -143,9 +143,7 @@ class SquidGame:
             current_light (str): The current light ("Green" or "Red").
         """
         if moving_players and current_light == "Red":
-            print(
-                f'Eliminated: {", ".join([str(p.player_id) for p in moving_players])}.'
-            )
+            print(f'Eliminated: {", ".join([p.id for p in moving_players])}.')
         else:
             print("Eliminated: None.")
 
@@ -197,8 +195,8 @@ class SquidGame:
 
 if __name__ == "__main__":
     game = SquidGame()
-    remaining_players = game.start_game()
+    remaining_players: list[Player] = game.start()
 
     print("Remaining Players:")
     for player in remaining_players:
-        print(f"Player {player.player_id} at position {player.position}")
+        print(f"Player {player.id} at position {player.position}")
