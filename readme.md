@@ -5,34 +5,25 @@ This project simulates the "Red Light, Green Light" game from the popular TV ser
 ## Table of Contents
 
 - Overview
-
 - Classes
-
-    - Player
-
-    - SquidGame
-
+  - Player
+  - SquidGame
 - How It Works
-
 - Running the Game
-
 - Customization
-
 - License
 
 ## Overview
 
-This program implements the simulation of the "Red Light, Green Light" game, where a group of players must move during "Green Light" and stop moving during "Red Light." Players who move during "Red Light" are eliminated from the game. The game continues for a set duration or until only one player remains.
+This program implements the simulation of the "Red Light, Green Light" game, where a group of players must move during "Green Light" and stop moving during "Red Light." Players who move during "Red Light" are eliminated from the game. The game continues for a set duration or until all players are eliminated.
 
-### Key Features:
+### Key Features
 
 - Players are randomly selected to move during each "Green Light" interval.
-
 - Players are eliminated if they move during "Red Light."
-
 - The game alternates between "Green Light" and "Red Light" until the specified game duration ends.
-
 - The game tracks the movement of players and their eliminations.
+- Remaining players are printed after the game ends, showing their final positions.
 
 ## Classes
 
@@ -40,12 +31,14 @@ This program implements the simulation of the "Red Light, Green Light" game, whe
 
 The `Player` class represents an individual player in the game. Each player has:
 
-- **player_id**: A unique identifier for the player.
+- **id**: A unique identifier for the player (e.g., "001", "002").
 - **position**: The player's current position in the game (starts at 0).
+- **eliminated**: A boolean indicating whether the player has been eliminated from the game (starts as False).
 
 Methods:
 
-- `move()`: Increments the player's position by 1.
+- `move()`: Increments the player's position by 1 if not eliminated.
+- `eliminate()`: Marks the player as eliminated when they move during "Red Light."
 
 ### SquidGame
 
@@ -54,68 +47,59 @@ The `SquidGame` class simulates the overall game. It manages a group of players 
 Methods:
 
 - `__init__(self, total_players: int = 456)`: Initializes the game with a given number of players (default 456).
-
 - `_create_players(self, total_players: int)`: Creates a list of Player objects.
-
-- `start_game(self, light_interval: int = 5, game_duration: int = 30, current_light: str = "Green")`: Simulates the "Red Light, Green Light" game.
-
+- `start(self, light_interval: int = 5, game_duration: int = 30)`: Simulates the "Red Light, Green Light" game.
+- `reset()`: Resets the game to its initial state, with all players starting at position 0 and marked as not eliminated.
 - `_print_players(self, label: str, players: list[Player])`: Helper function to print the players who moved or stayed still.
-
 - `_print_eliminated(self, moving_players: list[Player], current_light: str)`: Helper function to print eliminated players.
 
 ## How It Works
 
 1. The game starts with a specified number of players (456 by default).
-
 2. The game alternates between "Green Light" and "Red Light."
-
 3. During "Green Light," a random percentage of players move.
-
 4. During "Red Light," players who move are eliminated.
-
-5. The game continues for a given duration, and the remaining players are printed.
+5. The game continues for a given duration, or until all players are eliminated.
+6. The remaining players are printed, showing their ID and position.
 
 ### Running the Game
 
 1. Clone this repository or download the script.
-
 2. Ensure Python 3.x is installed on your system.
-
 3. Run the script:
 
 ```bash
 python squid_game.py
 ```
 
-### Example Output:
+### Example Output
 
-```text
+```bash
 Round 1: Green Light
-Moved: 1, 2, 3, 4, 5
-Static: 6, 7, 8, 9, 10
+Moved: 001, 002, 003, 004, 005
+Static: 006, 007, 008, 009, 010
 Eliminated: None.
 
 Round 2: Red Light
-Moved: 1, 2, 3, 4, 5
-Static: 6, 7, 8, 9, 10
-Eliminated: 1, 2, 3, 4, 5.
+Moved: 001, 002, 003, 004, 005
+Static: 006, 007, 008, 009, 010
+Eliminated: 001, 002, 003, 004, 005.
 
 ...
 ```
 
 ## Customization
 
-You can customize the game by modifying the following parameters in the `start_game()` method:
+You can customize the game by modifying the following parameters in the `start()` method:
 
 - `light_interval`: The interval (in seconds) between light changes.
 - `game_duration`: The total duration (in seconds) of the game.
-- `current_light`: The starting light color ("Green" or "Red").
 
-### Example Customization:
+### Example Customization
 
 ```python
 game = SquidGame(total_players=100)
-remaining_players = game.start_game(light_interval=3, game_duration=60)
+remaining_players = game.start(light_interval=3, game_duration=60)
 ```
 
 This example will create a game with 100 players, with a light interval of 3 seconds and a game duration of 60 seconds.
