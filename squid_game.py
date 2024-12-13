@@ -1,26 +1,39 @@
+from dataclasses import dataclass
 from random import sample
 from time import sleep, time
 
 
+@dataclass
 class Player:
-    def __init__(self, player_id: int, position: int = 0) -> None:
-        """
-        Initializes a player with a unique ID and an initial position.
+    """
+    Represents a player in the game.
 
-        Args:
-            player_id (int): The unique identifier for the player.
-            position (int, optional): The initial position of the player. Defaults to 0.
-        """
-        self.player_id = player_id
-        self.position = position
+    Attributes:
+        id (str): Unique identifier for the player.
+        position (int): Current position of the player. Defaults to 0.
+        eliminated (bool): Whether the player is eliminated. Defaults to False.
+    """
+
+    id: str
+    position: int = 0
+    eliminated: bool = False
 
     def move(self):
         """
-        Increments the player's position by 1 when they move.
+        Increments the player's position by 1 if not eliminated.
 
         This method simulates the player advancing in the game.
         """
-        self.position += 1
+        if not self.eliminated:
+            self.position += 1
+
+    def eliminate(self):
+        """
+        Marks the player as eliminated when they move during a "Red" light.
+
+        This method simulates the player being eliminated in the game.
+        """
+        self.eliminated = True
 
 
 class SquidGame:
